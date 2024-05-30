@@ -1,0 +1,21 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgb(210, 17, 17);
+  width: 100vw;
+  height: 100vh;
+}
+
+.timer-inputs{
+  background-color: black;
+  width: 60%;
+  justify-content: center;
+  text-align: center;
+}
+
+.focus-input, .break-input, .sets-count{
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
