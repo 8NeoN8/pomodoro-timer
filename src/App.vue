@@ -1,24 +1,19 @@
-
 <template>
   <div class="container">
 
     <div class="countdown-timer">
       <div class="timer">
   
-        <template v-if="timeForFocus">
+        <template v-if="timeToFocus">
           <h1 class="focus-header"> Time to Focus </h1>
-          <div class="display-time">
-            {{timer.hours}} : {{timer.minutes}} : {{ timer.seconds }}
-          </div>
         </template>
-  
-        <template v-if="!timeForFocus">
+        <template v-if="timeToRelax">
           <h1 class="focus-header"> Time to Relax </h1>
-          <div class="display-time">
-            {{timer.hours}} : {{timer.minutes}} : {{ timer.seconds }}
-          </div>
         </template>
-  
+        <div class="display-time">
+          {{timer.minutes}} : {{ timer.seconds }}
+        </div>
+
       </div>
     </div>
 
@@ -40,185 +35,139 @@
           </span>
         </div>
   
+        <div class="autoplay-timer">
+          <label for="">Auto start breaks and sets?</label>
+          <input type="checkbox" name="autoplay-timer" id="autoplay-timer" v-model="autoplay">
+        </div>
         <div class="sets-count">
           <span>Pomodoro Count:</span> <span>{{pomoSetCount}}</span>
         </div>
+
       </div>
       <div class="option-buttons">
   
-        <button class="option-button" @click="startTimer()"> Start </button>
+        <button class="option-button" v-if="!isRunning && !isPaused" @click="setupCountdown(); startTimer()"> Start </button>
   
-        <button class="option-button" @click="pauseTimer()"> Pause </button>
+        <button class="option-button" v-if="isRunning" @click="pauseTimer()"> Pause </button>
   
-        <button class="option-button" @click="continueTimer()"> Continue </button>
+        <button class="option-button" v-if="isPaused" @click="continueTimer()"> Continue </button>
   
-        <button class="option-button" @click="stopTimer()"> Stop </button>
+        <button class="option-button" v-if="isRunning || isPaused" @click="stopTimer()"> Stop </button>
 
       </div>  
     </div>
   </div>
 </template>
-<script>
 
+<script>
+import timerEnd from './assets/audio/timerEnd.mp3'
 export default{
   components:{
   },
   data() {
     return {
-      pomoTime:25,
-      breakTime:5,
+      pomoTime:5,
+      breakTime:1,
       pomoSetCount:0,
       isRunning: false,
       isPaused: false,
-      timeForFocus: true,
-      timeForRelax: true,
+      timeToFocus: true,
+      timeToRelax: false,
       timer:{
         seconds: 0,
-        hours: 0,
         minutes: 0
       },
-      pomodoroFinished: false,
-      
+      autoplay: false,
+      audio: null,
     }
   },
   computed:{
-    focusTime(){
-      return this.pomoTime
-    }
+    
+  },
+  created() {
+    
+  },
+  mounted() {
+    this.audio = new Audio(timerEnd)
+    this.audio.volume = 0.1
   },
   methods: {
-    run(){
-      this.isRunning = true;
-      this.isPaused = false;
-    },
-    pause(){
-      this.isRunning = false;
-      this.isPaused = true;
-    },
-    stop(){
-      this.isRunning = false;
-      this.isPaused = false;
-    },
     setupCountdown(){ 
-
-      this.timer.hours = 0
+      
       this.timer.minutes = 0
       this.timer.seconds = 0
-
-      if(!this.timeForFocus){
+      
+      if(this.timeToRelax){
         this.timer.minutes = this.breakTime
-        this.$emit('increaseSets')
+      }
+      
+      if(this.timeToFocus){
+        this.timer.minutes = this.pomoTime
+      }
+    },
+    startTimer(){
+      this.isRunning = true
+      this.isPaused = false
+      this.countDown()
+    },
+    countDown(){
+      if(!this.isRunning){
+        
         return
       }
-
-      if(!this.timeForFocus){
-        this.timer.minutes = this.breakTime
-        this.$emit('increaseSets')
-        return
-      }
-
-      this.timer.minutes = this.focusTime
-
-
-      if(this.focusTime > 60){
-        this.timer.hours = '01'
-        let newMinutes = this.focusTime - 60
-        this.timer.minutes = newMinutes < 10 ? `0${newMinutes}` : newMinutes
-      }
-
-      },
-      countDown(){
-
-      if(!this.isRunning) return
-      let continueDown = true
 
       setTimeout(() => {
 
+        if(this.timer.seconds > 0) this.timer.seconds--
+
         if(this.timer.seconds <= 0){
-          this.timer.seconds = 60
+          this.timer.seconds = 59
           this.timer.minutes--
-          if(this.timer.minutes < 10) this.timer.minutes = `0${this.timer.minutes}`
         }
 
-        if(this.timer.minutes < 0 && this.timer.hours == '01'){
-          this.timer.minutes = 59
-          this.timer.hours = 0
-        }
-
-        if(this.timer.minutes <= 0 && this.timer.hours == 0 && this.timer.seconds == 1){
-          continueDown = false
-          this.pomodoroFinished = true
-          this.isRunning = false
-          this.timer.hours = 0
-          this.timer.seconds = 0
+        if(this.timer.minutes <= 0){
           this.timer.minutes = 0
-        }
-
-
-        
-
-        if(continueDown){
-          this.timer.seconds--
-          if(this.timer.seconds < 10) this.timer.seconds = `0${this.timer.seconds}`
-        }
-
-        if(!this.isRunning && !this.isPaused){
-          this.pomodoroFinished = true
-          this.isRunning = false
-          this.timer.hours = 0
           this.timer.seconds = 0
-          this.timer.minutes = 0
-        }
-        
-        if (this.pomodoroFinished) {
-          this.stopTimer()
-          this.timeForFocus = false
-          this.setupCountdown
+
+          if(this.timeToRelax) this.pomoSetCount++;
+
+          this.timeToFocus = !this.timeToFocus
+          this.timeToRelax = !this.timeToRelax
+          
+          this.isRunning = false
+          this.audio.pause()
+          this.audio.currentTime = 0
+          this.audio.play()
         }
 
-        if(this.isRunning) this.countDown()
-        
+        if(this.autoplay && this.timer.minutes <= 0){
+          this.setupCountdown()
+          this.startTimer()
+          return
+        }
+
+        this.countDown()
+
       }, 10);
 
-      },
-      startTimer(){
-      this.isRunning = true
-      this.isPaused = false
-      this.$emit('runCountdown')
-      this.setupCountdown()
-      this.countDown()
-      },
-      pauseTimer(){
+    },
+    pauseTimer(){
       this.isRunning = false
       this.isPaused = true
-      this.$emit('pauseCountdown')
-      },
-      continueTimer(){
+    },
+    continueTimer(){
       this.isRunning = true
       this.isPaused = false
-      this.$emit('runCountdown')
       this.countDown()
-      },
-      stopTimer(){
-      this.pauseTimer()
+    },
+    stopTimer(){
       this.isRunning = false
       this.isPaused = false
-      this.$emit('stopCountdown')
-
-      this.timer.hours = 0
-      this.timer.seconds = 0
-      this.timer.minutes = 0
-      },
+      this.setupCountdown()
+    },
 
   },
   watch:{
-    pomoTime(){
-      this.pomoTime = parseInt(this.pomoTime)
-    },
-    breakTime(){
-      this.breakTime = parseInt(this.breakTime)
-    },
-    
   }
 }
 </script>
