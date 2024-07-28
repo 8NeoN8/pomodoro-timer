@@ -1,7 +1,7 @@
 <a id="readme-top"></a>
 
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/8NeoN8/pomodoro-timer">
     <img src="src/assets/img/tomatoTimer.jpeg" alt="Logo" width="80" height="80">
   </a>
 
@@ -10,7 +10,7 @@
   <p align="center">
     A simple pomodoro timer for focused time on completing a task
     <br>
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://8neon8.github.io/pomodoro-timer/">View Demo</a>
     <br>
     
   </p>
@@ -47,7 +47,7 @@ This is a Simple pomodoro timer that is used to separate blocks of time to focus
 
 ### Built With
 
-* [![Vue][Vue.js]][https://vuejs.org/]
+* [![Vue][Vue.js]][Vue-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -111,3 +111,6 @@ Project Link: [https://github.com/8NeoN8/pomodoro-timer](https://github.com/8Neo
 * [Free Tomato image used for the logo](https://www.rawpixel.com/image/6771007/tomato-clip-art-free-public-domain-cc0-image)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Vue-url]: https://vuejs.org/
