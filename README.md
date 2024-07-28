@@ -100,7 +100,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Andres Gonzalez - [@AndresPGQ](https://twitter.com/twitter_handle) - andrespaul0903@hotmail.com
+Andres Gonzalez - [@AndresPGQ](https://x.com/AndresPGQ) - andrespaul0903@hotmail.com
 
 Project Link: [https://github.com/8NeoN8/pomodoro-timer](https://github.com/8NeoN8/pomodoro-timer)
 
