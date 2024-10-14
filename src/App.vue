@@ -148,7 +148,7 @@ export default{
 
         this.countDown()
 
-      }, 10);
+      }, 1000);
 
     },
     pauseTimer(){
